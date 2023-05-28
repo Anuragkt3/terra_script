@@ -62,7 +62,7 @@ resource "aws_instance" "app_server" {
   connection {
     # SSH protocol is used for accessing the AWS Instance!
     type        = "ssh"
-    user        = "Terraform_Demo"
+    user        = self.public_ip
     private_key = file("~/.ssh/id_rsa.pub")
   }
   provisioner "remote-exec" {
