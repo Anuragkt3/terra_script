@@ -1,3 +1,4 @@
+#STEP1: Basic Syntax
 terraform {
   required_providers {
     aws = {
@@ -6,9 +7,11 @@ terraform {
     }
   }
 }
+#STEP2: Provide AWS Region
 provider "aws" {
   region = "us-east-1"
 }
+#STEP3: Create Key-Pair
 resource "aws_key_pair" "IntegrationKey" {
 
   # Name of the key which you want to use
@@ -16,7 +19,7 @@ resource "aws_key_pair" "IntegrationKey" {
 
   public_key = file("~/.ssh/id_rsa.pub")
 }
-# Creating a security group!
+# STEP4: Creating a security group!
 resource "aws_security_group" "ISG" {
 
   # Write description for the security group!
@@ -46,7 +49,7 @@ resource "aws_security_group" "ISG" {
     Name = "Project1"
   }
 }
-
+# STEP 5: Create EC2 Instance
 resource "aws_instance" "app_server" {
   ami           = "ami-053b0d53c279acc90"
   instance_type = "t2.micro"
@@ -54,4 +57,21 @@ resource "aws_instance" "app_server" {
   tags = {
     Name = "Terraform_Demo"
   }
+
+  # Establishing connection to the launched AWS instance!
+  connection {
+    # SSH protocol is used for accessing the AWS Instance!
+    type        = "ssh"
+    user        = ""
+    private_key = file("~/.ssh/id_rsa.pub")
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum update -y",
+      "sudo yum install git -y",
+    ]
+  }
 }
+
+
+
